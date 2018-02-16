@@ -5,7 +5,7 @@ Input system built on Raw Input API and WM_* messages in Visual Basic 6.
 
 **WM_CHAR:** For text input.
 
-**WM_MOUSEMOVE, WM_BUTTONDOWN/UP/DOUBLE:** For mouse input. Supports Left, Right & Middle mouse buttons.
+**WM_MOUSEMOVE, WM_BUTTON*:** For mouse input. Supports Left, Right & Middle mouse buttons.
 
 **WM_MOUSEWHEEL:** Not fully implemented. See Task List.
 
@@ -28,7 +28,7 @@ If Input_MouseState(MOUSE_LEFT, MOUSE_DOUBLE) Then frmMain.Caption = "Double Kil
 More...
 
 ## Task List
-- [ ] Actually implement Mouse Wheel functionality (GET_WHEEL_DELTA_WPARAM(wParam))
+- [ ] Mouse Wheel functionality (GET_WHEEL_DELTA_WPARAM(wParam))
 - [ ] Binding system like in games.
 
 ## Credits
