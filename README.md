@@ -1,29 +1,33 @@
 # Input System
 Input system built on Raw Input API and WM_* messages in Visual Basic 6.
 
-**WM_INPUT (Raw Input):**
+**WM_INPUT (Raw Input):** For key presses.
 
-For key presses.
+**WM_CHAR:** For text input.
 
-**WM_CHAR:**
+**WM_MOUSEMOVE, WM_BUTTONDOWN/UP/DOUBLE:** For mouse input. Supports Left, Right & Middle mouse buttons.
 
-For text input.
-
-**WM_MOUSEMOVE, WM_BUTTONDOWN, WM_BUTTONUP, WM_BUTTONDOUBLE:**
-
-For mouse input. Supports Left, Right & Middle mouse buttons.
-
-**WM_MOUSEWHEEL:**
-
-Not fully implemented. See Todo list.
+**WM_MOUSEWHEEL:** Not fully implemented. See Task List.
 
 ## Documentation
-**Input_Check (in modInput)**
-Can be used to bind/trigger actions for key/mouse presses using if statements.
+**Input_Check (in modInput):** Used to check for key/mouse presses.
+
+```vb
+' Keyboard
+If Keyboard.Data.Message = WM_KEYDOWN Then
+    ' Terminate
+    If Keyboard.Data.VKey = VK_ESCAPE Then Terminate
+End If
+
+' Mouse
+If Input_MouseState(MOUSE_LEFT, MOUSE_DOWN) Then frmMain.Caption = "Hold this Down L"
+If Input_MouseState(MOUSE_LEFT, MOUSE_UP) Then frmMain.Caption = "Input System"
+If Input_MouseState(MOUSE_LEFT, MOUSE_DOUBLE) Then frmMain.Caption = "Double Kill!"
+```
 
 More...
 
-## Possible Todo
+## Task List
 - [ ] Actually implement Mouse Wheel functionality (GET_WHEEL_DELTA_WPARAM(wParam))
 - [ ] Binding system like in games.
 
