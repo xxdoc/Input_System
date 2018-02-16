@@ -5,7 +5,7 @@ Input system built on Raw Input API and WM_* messages in Visual Basic 6.
 
 **WM_CHAR:** For text input.
 
-**WM_MOUSEMOVE, WM_BUTTON*:** For mouse input. Supports Left, Right & Middle mouse buttons.
+**WM_MOUSEMOVE, WM_BUTTON:** For mouse input. Supports Left, Right & Middle mouse buttons.
 
 **WM_MOUSEWHEEL:** Not fully implemented. See Task List.
 
