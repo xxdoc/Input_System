@@ -1,5 +1,5 @@
 # Input System
-Input system built on Raw Input API and WM_* messages in Visual Basic 6.
+Input system built upon the Raw Input API and WM_* messages in Visual Basic 6.
 
 **WM_INPUT (Raw Input):** For key presses.
 
