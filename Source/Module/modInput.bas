@@ -7,6 +7,10 @@ Private Declare Function RegisterRawInputDevices Lib "User32" (ByRef Devices As 
 Private Declare Function GetRawInputData Lib "User32" (ByVal RawInput As Long, ByVal Command As Long, ByRef Data As Any, _
     ByRef Size As Long, ByVal SizeHeader As Long) As Long
 
+' GetRawInputData.Command
+Private Const RID_INPUT As Long = &H10000003
+
+' Raw Structs
 Private Type tRaw_Device
     UsagePage As Integer
     Usage     As Integer
@@ -30,8 +34,6 @@ Private Type tRaw_Keyboard
     Extra    As Long
 End Type
 
-Private Const RID_INPUT As Long = &H10000003
-
 ' tRaw_Header.Type
 Private Const RIM_TYPEKEYBOARD As Long = &H1&
 
@@ -51,195 +53,178 @@ Private Const MAPVK_VK_TO_CHAR   As Long = 2 ' Virtual Key into Unshifted Charac
 Private Const MAPVK_VSC_TO_VK_EX As Long = 3 ' Scan Code into Virtual Key + Left/Right Keys
 
 ' Virtual Key
-Private Const VK_LBUTTON             As Long = &H1  ' Left mouse button
-Private Const VK_RBUTTON             As Long = &H2  ' Right mouse button
-Private Const VK_CANCEL              As Long = &H3  ' Control-break processing
-Private Const VK_MBUTTON             As Long = &H4  ' Middle mouse button (three-button mouse)
-Private Const VK_XBUTTON1            As Long = &H5  ' X1 mouse button
-Private Const VK_XBUTTON2            As Long = &H6  ' X2 mouse button
-Private Const VK_BACK                As Long = &H8  ' BACKSPACE key
-Private Const VK_TAB                 As Long = &H9  ' TAB key
-Private Const VK_CLEAR               As Long = &HC  ' CLEAR key
-Private Const VK_RETURN              As Long = &HD  ' ENTER key
-Private Const VK_SHIFT               As Long = &H10 ' SHIFT key
-Private Const VK_CONTROL             As Long = &H11 ' CTRL key
-Private Const VK_MENU                As Long = &H12 ' ALT key
-Private Const VK_PAUSE               As Long = &H13 ' PAUSE key
-Private Const VK_CAPITAL             As Long = &H14 ' CAPS LOCK key
-Private Const VK_KANA                As Long = &H15 ' IME Kana mode
-Private Const VK_JUNJA               As Long = &H17 ' IME Junja mode
-Private Const VK_FINAL               As Long = &H18 ' IME final mode
-Private Const VK_HANJA               As Long = &H19 ' IME Hanja mode
-Private Const VK_ESCAPE              As Long = &H1B ' ESC key
-Private Const VK_CONVERT             As Long = &H1C ' IME convert
-Private Const VK_NONCONVERT          As Long = &H1D ' IME nonconvert
-Private Const VK_ACCEPT              As Long = &H1E ' IME accept
-Private Const VK_MODECHANGE          As Long = &H1F ' IME mode change request
-Private Const VK_SPACE               As Long = &H20 ' SPACEBAR
-Private Const VK_PRIOR               As Long = &H21 ' PAGE UP key
-Private Const VK_NEXT                As Long = &H22 ' PAGE DOWN key
-Private Const VK_END                 As Long = &H23 ' END key
-Private Const VK_HOME                As Long = &H24 ' HOME key
-Private Const VK_LEFT                As Long = &H25 ' LEFT ARROW key
-Private Const VK_UP                  As Long = &H26 ' UP ARROW key
-Private Const VK_RIGHT               As Long = &H27 ' RIGHT ARROW key
-Private Const VK_DOWN                As Long = &H28 ' DOWN ARROW key
-Private Const VK_SELECT              As Long = &H29 ' SELECT key
-Private Const VK_PRINT               As Long = &H2A ' PRINT key
-Private Const VK_EXECUTE             As Long = &H2B ' EXECUTE key
-Private Const VK_SNAPSHOT            As Long = &H2C ' PRINT SCREEN key
-Private Const VK_INSERT              As Long = &H2D ' INS key
-Private Const VK_DELETE              As Long = &H2E ' DEL key
-Private Const VK_HELP                As Long = &H2F ' HELP key
-Private Const VK_0                   As Long = &H30 ' 0 key
-Private Const VK_1                   As Long = &H31 ' 1 key
-Private Const VK_2                   As Long = &H32 ' 2 key
-Private Const VK_3                   As Long = &H33 ' 3 key
-Private Const VK_4                   As Long = &H34 ' 4 key
-Private Const VK_5                   As Long = &H35 ' 5 key
-Private Const VK_6                   As Long = &H36 ' 6 key
-Private Const VK_7                   As Long = &H37 ' 7 key
-Private Const VK_8                   As Long = &H38 ' 8 key
-Private Const VK_9                   As Long = &H39 ' 9 key
-Private Const VK_A                   As Long = &H41 ' A key
-Private Const VK_B                   As Long = &H42 ' B key
-Private Const VK_C                   As Long = &H43 ' C key
-Private Const VK_D                   As Long = &H44 ' D key
-Private Const VK_E                   As Long = &H45 ' E key
-Private Const VK_F                   As Long = &H46 ' F key
-Private Const VK_G                   As Long = &H47 ' G key
-Private Const VK_H                   As Long = &H48 ' H key
-Private Const VK_I                   As Long = &H49 ' I key
-Private Const VK_J                   As Long = &H4A ' J key
-Private Const VK_K                   As Long = &H4B ' K key
-Private Const VK_L                   As Long = &H4C ' L key
-Private Const VK_M                   As Long = &H4D ' M key
-Private Const VK_N                   As Long = &H4E ' N key
-Private Const VK_O                   As Long = &H4F ' O key
-Private Const VK_P                   As Long = &H50 ' P key
-Private Const VK_Q                   As Long = &H51 ' Q key
-Private Const VK_R                   As Long = &H52 ' R key
-Private Const VK_S                   As Long = &H53 ' S key
-Private Const VK_T                   As Long = &H54 ' T key
-Private Const VK_U                   As Long = &H55 ' U key
-Private Const VK_V                   As Long = &H56 ' V key
-Private Const VK_W                   As Long = &H57 ' W key
-Private Const VK_X                   As Long = &H58 ' X key
-Private Const VK_Y                   As Long = &H59 ' Y key
-Private Const VK_Z                   As Long = &H5A ' Z key
-Private Const VK_LWIN                As Long = &H5B ' Left Windows key (Natural keyboard)
-Private Const VK_RWIN                As Long = &H5C ' Right Windows key (Natural keyboard)
-Private Const VK_APPS                As Long = &H5D ' Applications key (Natural keyboard)
-Private Const VK_SLEEP               As Long = &H5F ' Computer Sleep key
-Private Const VK_NUMPAD0             As Long = &H60 ' Numeric keypad 0 key
-Private Const VK_NUMPAD1             As Long = &H61 ' Numeric keypad 1 key
-Private Const VK_NUMPAD2             As Long = &H62 ' Numeric keypad 2 key
-Private Const VK_NUMPAD3             As Long = &H63 ' Numeric keypad 3 key
-Private Const VK_NUMPAD4             As Long = &H64 ' Numeric keypad 4 key
-Private Const VK_NUMPAD5             As Long = &H65 ' Numeric keypad 5 key
-Private Const VK_NUMPAD6             As Long = &H66 ' Numeric keypad 6 key
-Private Const VK_NUMPAD7             As Long = &H67 ' Numeric keypad 7 key
-Private Const VK_NUMPAD8             As Long = &H68 ' Numeric keypad 8 key
-Private Const VK_NUMPAD9             As Long = &H69 ' Numeric keypad 9 key
-Private Const VK_MULTIPLY            As Long = &H6A ' Multiply key
-Private Const VK_ADD                 As Long = &H6B ' Add key
-Private Const VK_SEPARATOR           As Long = &H6C ' Separator key
-Private Const VK_SUBTRACT            As Long = &H6D ' Subtract key
-Private Const VK_DECIMAL             As Long = &H6E ' Decimal key
-Private Const VK_DIVIDE              As Long = &H6F ' Divide key
-Private Const VK_F1                  As Long = &H70 ' F1 key
-Private Const VK_F2                  As Long = &H71 ' F2 key
-Private Const VK_F3                  As Long = &H72 ' F3 key
-Private Const VK_F4                  As Long = &H73 ' F4 key
-Private Const VK_F5                  As Long = &H74 ' F5 key
-Private Const VK_F6                  As Long = &H75 ' F6 key
-Private Const VK_F7                  As Long = &H76 ' F7 key
-Private Const VK_F8                  As Long = &H77 ' F8 key
-Private Const VK_F9                  As Long = &H78 ' F9 key
-Private Const VK_F10                 As Long = &H79 ' F10 key
-Private Const VK_F11                 As Long = &H7A ' F11 key
-Private Const VK_F12                 As Long = &H7B ' F12 key
-Private Const VK_F13                 As Long = &H7C ' F13 key
-Private Const VK_F14                 As Long = &H7D ' F14 key
-Private Const VK_F15                 As Long = &H7E ' F15 key
-Private Const VK_F16                 As Long = &H7F ' F16 key
-Private Const VK_F17                 As Long = &H80 ' F17 key
-Private Const VK_F18                 As Long = &H81 ' F18 key
-Private Const VK_F19                 As Long = &H82 ' F19 key
-Private Const VK_F20                 As Long = &H83 ' F20 key
-Private Const VK_F21                 As Long = &H84 ' F21 key
-Private Const VK_F22                 As Long = &H85 ' F22 key
-Private Const VK_F23                 As Long = &H86 ' F23 key
-Private Const VK_F24                 As Long = &H87 ' F24 key
-Private Const VK_NUMLOCK             As Long = &H90 ' NUM LOCK key
-Private Const VK_SCROLL              As Long = &H91 ' SCROLL LOCK key
-Private Const VK_LSHIFT              As Long = &HA0 ' Left SHIFT key
-Private Const VK_RSHIFT              As Long = &HA1 ' Right SHIFT key
-Private Const VK_LCONTROL            As Long = &HA2 ' Left CONTROL key
-Private Const VK_RCONTROL            As Long = &HA3 ' Right CONTROL key
-Private Const VK_LMENU               As Long = &HA4 ' Left MENU key
-Private Const VK_RMENU               As Long = &HA5 ' Right MENU key
-Private Const VK_BROWSER_BACK        As Long = &HA6 ' Browser Back key
-Private Const VK_BROWSER_FORWARD     As Long = &HA7 ' Browser Forward key
-Private Const VK_BROWSER_REFRESH     As Long = &HA8 ' Browser Refresh key
-Private Const VK_BROWSER_STOP        As Long = &HA9 ' Browser Stop key
-Private Const VK_BROWSER_SEARCH      As Long = &HAA ' Browser Search key
-Private Const VK_BROWSER_FAVORITES   As Long = &HAB ' Browser Favorites key
-Private Const VK_BROWSER_HOME        As Long = &HAC ' Browser Start and Home key
-Private Const VK_VOLUME_MUTE         As Long = &HAD ' Volume Mute key
-Private Const VK_VOLUME_DOWN         As Long = &HAE ' Volume Down key
-Private Const VK_VOLUME_UP           As Long = &HAF ' Volume Up key
-Private Const VK_MEDIA_NEXT_TRACK    As Long = &HB0 ' Next Track key
-Private Const VK_MEDIA_PREV_TRACK    As Long = &HB1 ' Previous Track key
-Private Const VK_MEDIA_STOP          As Long = &HB2 ' Stop Media key
-Private Const VK_MEDIA_PLAY_PAUSE    As Long = &HB3 ' Play/Pause Media key
-Private Const VK_LAUNCH_MAIL         As Long = &HB4 ' Start Mail key
-Private Const VK_LAUNCH_MEDIA_SELECT As Long = &HB5 ' Select Media key
-Private Const VK_LAUNCH_APP1         As Long = &HB6 ' Start Application 1 key
-Private Const VK_LAUNCH_APP2         As Long = &HB7 ' Start Application 2 key
-Private Const VK_OEM_1               As Long = &HBA ' Misc chars vary. For US standard keyboard, the ';:' key
-Private Const VK_OEM_PLUS            As Long = &HBB ' For any country/region, the '+' key
-Private Const VK_OEM_COMMA           As Long = &HBC ' For any country/region, the ',' key
-Private Const VK_OEM_MINUS           As Long = &HBD ' For any country/region, the '-' key
-Private Const VK_OEM_PERIOD          As Long = &HBE ' For any country/region, the '.' key
-Private Const VK_OEM_2               As Long = &HBF ' Misc chars vary. For the US standard keyboard, the '/?' key
-Private Const VK_OEM_3               As Long = &HC0 ' Misc chars vary. For the US standard keyboard, the '~' key
-Private Const VK_OEM_4               As Long = &HDB ' Misc chars vary. For the US standard keyboard, the '[{' key
-Private Const VK_OEM_5               As Long = &HDC ' Misc chars vary. For the US standard keyboard, the '\|' key
-Private Const VK_OEM_6               As Long = &HDD ' Misc chars vary. For the US standard keyboard, the ']}' key
-Private Const VK_OEM_7               As Long = &HDE ' Misc chars vary. For the US standard keyboard, the 'single-quote/double-quote' key
-Private Const VK_OEM_8               As Long = &HDF ' Misc chars vary.
-Private Const VK_OEM_102             As Long = &HE2 ' Angle bracket key or backslash key on the RT 102-key keyboard
-Private Const VK_PROCESSKEY          As Long = &HE5 ' IME PROCESS key
-Private Const VK_PACKET              As Long = &HE7 ' Pass Unicode chars as if they were keystrokes
-Private Const VK_ATTN                As Long = &HF6 ' Attn key
-Private Const VK_CRSEL               As Long = &HF7 ' CrSel key
-Private Const VK_EXSEL               As Long = &HF8 ' ExSel key
-Private Const VK_EREOF               As Long = &HF9 ' Erase EOF key
-Private Const VK_PLAY                As Long = &HFA ' Play key
-Private Const VK_ZOOM                As Long = &HFB ' Zoom key
-Private Const VK_NONAME              As Long = &HFC ' Reserved
-Private Const VK_PA1                 As Long = &HFD ' PA1 key
-Private Const VK_OEM_CLEAR           As Long = &HFE ' Clear key
-
-' WM_*
-Public Const WM_INPUT         As Long = &HFF&
-Public Const WM_KEYDOWN       As Long = &H100
-Public Const WM_KEYUP         As Long = &H101
-Public Const WM_CHAR          As Long = &H102
-Public Const WM_SYSKEYDOWN    As Long = &H104
-Public Const WM_SYSKEYUP      As Long = &H105
-Public Const WM_MOUSEMOVE     As Long = &H200
-Public Const WM_LBUTTONDOWN   As Long = &H201
-Public Const WM_LBUTTONUP     As Long = &H202
-Public Const WM_LBUTTONDBLCLK As Long = &H203
-Public Const WM_RBUTTONDOWN   As Long = &H204
-Public Const WM_RBUTTONUP     As Long = &H205
-Public Const WM_RBUTTONDBLCLK As Long = &H206
-Public Const WM_MBUTTONDOWN   As Long = &H207
-Public Const WM_MBUTTONUP     As Long = &H208
-Public Const WM_MBUTTONDBLCLK As Long = &H209
-Public Const WM_MOUSEWHEEL    As Long = &H20A
+Public Enum eVirtualKey
+    VK_LBUTTON = &H1              ' Left mouse button
+    VK_RBUTTON = &H2              ' Right mouse button
+    VK_CANCEL = &H3               ' Control-break processing
+    VK_MBUTTON = &H4              ' Middle mouse button (three-button mouse)
+    VK_XBUTTON1 = &H5             ' X1 mouse button
+    VK_XBUTTON2 = &H6             ' X2 mouse button
+    VK_BACK = &H8                 ' BACKSPACE key
+    VK_TAB = &H9                  ' TAB key
+    VK_CLEAR = &HC                ' CLEAR key
+    VK_RETURN = &HD               ' ENTER key
+    VK_SHIFT = &H10               ' SHIFT key
+    VK_CONTROL = &H11             ' CTRL key
+    VK_MENU = &H12                ' ALT key
+    VK_PAUSE = &H13               ' PAUSE key
+    VK_CAPITAL = &H14             ' CAPS LOCK key
+    VK_KANA = &H15                ' IME Kana mode
+    VK_JUNJA = &H17               ' IME Junja mode
+    VK_FINAL = &H18               ' IME final mode
+    VK_HANJA = &H19               ' IME Hanja mode
+    VK_ESCAPE = &H1B              ' ESC key
+    VK_CONVERT = &H1C             ' IME convert
+    VK_NONCONVERT = &H1D          ' IME nonconvert
+    VK_ACCEPT = &H1E              ' IME accept
+    VK_MODECHANGE = &H1F          ' IME mode change request
+    VK_SPACE = &H20               ' SPACEBAR
+    VK_PRIOR = &H21               ' PAGE UP key
+    VK_NEXT = &H22                ' PAGE DOWN key
+    VK_END = &H23                 ' END key
+    VK_HOME = &H24                ' HOME key
+    VK_LEFT = &H25                ' LEFT ARROW key
+    VK_UP = &H26                  ' UP ARROW key
+    VK_RIGHT = &H27               ' RIGHT ARROW key
+    VK_DOWN = &H28                ' DOWN ARROW key
+    VK_SELECT = &H29              ' SELECT key
+    VK_PRINT = &H2A               ' PRINT key
+    VK_EXECUTE = &H2B             ' EXECUTE key
+    VK_SNAPSHOT = &H2C            ' PRINT SCREEN key
+    VK_INSERT = &H2D              ' INS key
+    VK_DELETE = &H2E              ' DEL key
+    VK_HELP = &H2F                ' HELP key
+    VK_0 = &H30                   ' 0 key
+    VK_1 = &H31                   ' 1 key
+    VK_2 = &H32                   ' 2 key
+    VK_3 = &H33                   ' 3 key
+    VK_4 = &H34                   ' 4 key
+    VK_5 = &H35                   ' 5 key
+    VK_6 = &H36                   ' 6 key
+    VK_7 = &H37                   ' 7 key
+    VK_8 = &H38                   ' 8 key
+    VK_9 = &H39                   ' 9 key
+    VK_A = &H41                   ' A key
+    VK_B = &H42                   ' B key
+    VK_C = &H43                   ' C key
+    VK_D = &H44                   ' D key
+    VK_E = &H45                   ' E key
+    VK_F = &H46                   ' F key
+    VK_G = &H47                   ' G key
+    VK_H = &H48                   ' H key
+    VK_I = &H49                   ' I key
+    VK_J = &H4A                   ' J key
+    VK_K = &H4B                   ' K key
+    VK_L = &H4C                   ' L key
+    VK_M = &H4D                   ' M key
+    VK_N = &H4E                   ' N key
+    VK_O = &H4F                   ' O key
+    VK_P = &H50                   ' P key
+    VK_Q = &H51                   ' Q key
+    VK_R = &H52                   ' R key
+    VK_S = &H53                   ' S key
+    VK_T = &H54                   ' T key
+    VK_U = &H55                   ' U key
+    VK_V = &H56                   ' V key
+    VK_W = &H57                   ' W key
+    VK_X = &H58                   ' X key
+    VK_Y = &H59                   ' Y key
+    VK_Z = &H5A                   ' Z key
+    VK_LWIN = &H5B                ' Left Windows key (Natural keyboard)
+    VK_RWIN = &H5C                ' Right Windows key (Natural keyboard)
+    VK_APPS = &H5D                ' Applications key (Natural keyboard)
+    VK_SLEEP = &H5F               ' Computer Sleep key
+    VK_NUMPAD0 = &H60             ' Numeric keypad 0 key
+    VK_NUMPAD1 = &H61             ' Numeric keypad 1 key
+    VK_NUMPAD2 = &H62             ' Numeric keypad 2 key
+    VK_NUMPAD3 = &H63             ' Numeric keypad 3 key
+    VK_NUMPAD4 = &H64             ' Numeric keypad 4 key
+    VK_NUMPAD5 = &H65             ' Numeric keypad 5 key
+    VK_NUMPAD6 = &H66             ' Numeric keypad 6 key
+    VK_NUMPAD7 = &H67             ' Numeric keypad 7 key
+    VK_NUMPAD8 = &H68             ' Numeric keypad 8 key
+    VK_NUMPAD9 = &H69             ' Numeric keypad 9 key
+    VK_MULTIPLY = &H6A            ' Multiply key
+    VK_ADD = &H6B                 ' Add key
+    VK_SEPARATOR = &H6C           ' Separator key
+    VK_SUBTRACT = &H6D            ' Subtract key
+    VK_DECIMAL = &H6E             ' Decimal key
+    VK_DIVIDE = &H6F              ' Divide key
+    VK_F1 = &H70                  ' F1 key
+    VK_F2 = &H71                  ' F2 key
+    VK_F3 = &H72                  ' F3 key
+    VK_F4 = &H73                  ' F4 key
+    VK_F5 = &H74                  ' F5 key
+    VK_F6 = &H75                  ' F6 key
+    VK_F7 = &H76                  ' F7 key
+    VK_F8 = &H77                  ' F8 key
+    VK_F9 = &H78                  ' F9 key
+    VK_F10 = &H79                 ' F10 key
+    VK_F11 = &H7A                 ' F11 key
+    VK_F12 = &H7B                 ' F12 key
+    VK_F13 = &H7C                 ' F13 key
+    VK_F14 = &H7D                 ' F14 key
+    VK_F15 = &H7E                 ' F15 key
+    VK_F16 = &H7F                 ' F16 key
+    VK_F17 = &H80                 ' F17 key
+    VK_F18 = &H81                 ' F18 key
+    VK_F19 = &H82                 ' F19 key
+    VK_F20 = &H83                 ' F20 key
+    VK_F21 = &H84                 ' F21 key
+    VK_F22 = &H85                 ' F22 key
+    VK_F23 = &H86                 ' F23 key
+    VK_F24 = &H87                 ' F24 key
+    VK_NUMLOCK = &H90             ' NUM LOCK key
+    VK_SCROLL = &H91              ' SCROLL LOCK key
+    VK_LSHIFT = &HA0              ' Left SHIFT key
+    VK_RSHIFT = &HA1              ' Right SHIFT key
+    VK_LCONTROL = &HA2            ' Left CONTROL key
+    VK_RCONTROL = &HA3            ' Right CONTROL key
+    VK_LMENU = &HA4               ' Left MENU key
+    VK_RMENU = &HA5               ' Right MENU key
+    VK_BROWSER_BACK = &HA6        ' Browser Back key
+    VK_BROWSER_FORWARD = &HA7     ' Browser Forward key
+    VK_BROWSER_REFRESH = &HA8     ' Browser Refresh key
+    VK_BROWSER_STOP = &HA9        ' Browser Stop key
+    VK_BROWSER_SEARCH = &HAA      ' Browser Search key
+    VK_BROWSER_FAVORITES = &HAB   ' Browser Favorites key
+    VK_BROWSER_HOME = &HAC        ' Browser Start and Home key
+    VK_VOLUME_MUTE = &HAD         ' Volume Mute key
+    VK_VOLUME_DOWN = &HAE         ' Volume Down key
+    VK_VOLUME_UP = &HAF           ' Volume Up key
+    VK_MEDIA_NEXT_TRACK = &HB0    ' Next Track key
+    VK_MEDIA_PREV_TRACK = &HB1    ' Previous Track key
+    VK_MEDIA_STOP = &HB2          ' Stop Media key
+    VK_MEDIA_PLAY_PAUSE = &HB3    ' Play/Pause Media key
+    VK_LAUNCH_MAIL = &HB4         ' Start Mail key
+    VK_LAUNCH_MEDIA_SELECT = &HB5 ' Select Media key
+    VK_LAUNCH_APP1 = &HB6         ' Start Application 1 key
+    VK_LAUNCH_APP2 = &HB7         ' Start Application 2 key
+    VK_OEM_1 = &HBA               ' Misc chars vary. For US standard keyboard, the ';:' key
+    VK_OEM_PLUS = &HBB            ' For any country/region, the '+' key
+    VK_OEM_COMMA = &HBC           ' For any country/region, the ',' key
+    VK_OEM_MINUS = &HBD           ' For any country/region, the '-' key
+    VK_OEM_PERIOD = &HBE          ' For any country/region, the '.' key
+    VK_OEM_2 = &HBF               ' Misc chars vary. For the US standard keyboard, the '/?' key
+    VK_OEM_3 = &HC0               ' Misc chars vary. For the US standard keyboard, the '~' key
+    VK_OEM_4 = &HDB               ' Misc chars vary. For the US standard keyboard, the '[{' key
+    VK_OEM_5 = &HDC               ' Misc chars vary. For the US standard keyboard, the '\|' key
+    VK_OEM_6 = &HDD               ' Misc chars vary. For the US standard keyboard, the ']}' key
+    VK_OEM_7 = &HDE               ' Misc chars vary. For the US standard keyboard, the 'single-quote/double-quote' key
+    VK_OEM_8 = &HDF               ' Misc chars vary.
+    VK_OEM_102 = &HE2             ' Angle bracket key or backslash key on the RT 102-key keyboard
+    VK_PROCESSKEY = &HE5          ' IME PROCESS key
+    VK_PACKET = &HE7              ' Pass Unicode chars as if they were keystrokes
+    VK_ATTN = &HF6                ' Attn key
+    VK_CRSEL = &HF7               ' CrSel key
+    VK_EXSEL = &HF8               ' ExSel key
+    VK_EREOF = &HF9               ' Erase EOF key
+    VK_PLAY = &HFA                ' Play key
+    VK_ZOOM = &HFB                ' Zoom key
+    VK_NONAME = &HFC              ' Reserved
+    VK_PA1 = &HFD                 ' PA1 key
+    VK_OEM_CLEAR = &HFE           ' Clear key
+End Enum
 
 ' Mouse
 Public Enum eMouse
@@ -256,28 +241,40 @@ End Enum
 Private Type tKeyboard
     Header As tRaw_Header
     Data   As tRaw_Keyboard
+    
+    Key    As Integer
+    Char   As String
 End Type
 
 Dim Keyboard As tKeyboard
 
-' Input holders
-Dim Hold_Raw      As Integer
-Dim Hold_Char     As String
-Dim Hold_X        As Long
-Dim Hold_Y        As Long
-Dim Hold_L_Down   As Boolean
-Dim Hold_L_Up     As Boolean
-Dim Hold_L_Double As Boolean
-Dim Hold_R_Down   As Boolean
-Dim Hold_R_Up     As Boolean
-Dim Hold_R_Double As Boolean
-Dim Hold_M_Down   As Boolean
-Dim Hold_M_Up     As Boolean
-Dim Hold_M_Double As Boolean
-Dim Hold_Wheel    As Long
+' Mouse
+Private Type tMouse_State
+    Down   As Boolean
+    Up     As Boolean
+    Double As Boolean
+End Type
 
-Public Sub Input_Initialize()
-    Raw_Initialize
+Private Type tMouse
+    X      As Long
+    Y      As Long
+    
+    Left   As tMouse_State
+    Right  As tMouse_State
+    Middle As tMouse_State
+    
+    Wheel  As Long
+End Type
+
+Dim Mouse As tMouse
+
+Public Sub Input_Initialize(ByVal hWnd As Long)
+    Raw_Initialize hWnd
+    
+    ' Initial state
+    Input_MouseState(MOUSE_LEFT, MOUSE_UP) = True
+    Input_MouseState(MOUSE_RIGHT, MOUSE_UP) = True
+    Input_MouseState(MOUSE_MIDDLE, MOUSE_UP) = True
 End Sub
 
 Public Sub Input_Check()
@@ -306,14 +303,14 @@ Public Sub Input_HandleRaw(ByVal lParam As Long)
         Debug.Print "Input_Raw: (Incorrect size returned [" & lParam & ", " & Size & "])"
     End If
     
-    CopyMemory Keyboard, Data(0), Len(Keyboard)
+    CopyMemory Keyboard, Data(0), Len(Keyboard.Header) + Len(Keyboard.Data)
     
     ' Handle keyboard
     If Keyboard.Header.Type = RIM_TYPEKEYBOARD Then
         If Keyboard.Data.Message = WM_KEYDOWN Or Keyboard.Data.Message = WM_SYSKEYDOWN Then
             Raw_Fix
             
-            Input_Raw = Keyboard.Data.VKey
+            Keyboard.Key = Keyboard.Data.VKey
         End If
     End If
 End Sub
@@ -328,35 +325,35 @@ Public Sub Input_HandleMouseMove(ByVal lParam As Long)
     Input_MouseCoord(False) = CLng("&H" & Left$(H, 4))
 End Sub
 
-Public Property Get Input_Raw() As Integer
-    Input_Raw = Hold_Raw
+Public Property Get Input_Key() As Integer
+    Input_Key = Keyboard.Key
 End Property
 
-Public Property Let Input_Raw(ByVal Value As Integer)
-    Hold_Raw = Value
+Public Property Let Input_Key(ByVal Value As Integer)
+    Keyboard.Key = Value
 End Property
 
 Public Property Get Input_Char() As String
-    Input_Char = Hold_Char
+    Input_Char = Keyboard.Char
 End Property
 
 Public Property Let Input_Char(ByVal Value As String)
-    Hold_Char = Value
+    Keyboard.Char = Value
 End Property
 
 Public Property Get Input_MouseCoord(ByVal X As Boolean) As Long
     If X Then
-        Input_MouseCoord = Hold_X
+        Input_MouseCoord = Mouse.X
     Else
-        Input_MouseCoord = Hold_Y
+        Input_MouseCoord = Mouse.Y
     End If
 End Property
 
 Public Property Let Input_MouseCoord(ByVal X As Boolean, ByVal Value As Long)
     If X Then
-        Hold_X = Value
+        Mouse.X = Value
     Else
-        Hold_Y = Value
+        Mouse.Y = Value
     End If
 End Property
 
@@ -365,29 +362,29 @@ Public Property Get Input_MouseState(ByVal Button As eMouse, ByVal State As eMou
 
         Case MOUSE_LEFT
         If State = MOUSE_DOWN Then
-            Input_MouseState = Hold_L_Down
+            Input_MouseState = Mouse.Left.Down
         ElseIf State = MOUSE_UP Then
-            Input_MouseState = Hold_L_Up
+            Input_MouseState = Mouse.Left.Up
         ElseIf State = MOUSE_DOUBLE Then
-            Input_MouseState = Hold_L_Double
+            Input_MouseState = Mouse.Left.Double
         End If
-
+        
         Case MOUSE_RIGHT
         If State = MOUSE_DOWN Then
-            Input_MouseState = Hold_R_Down
+            Input_MouseState = Mouse.Right.Down
         ElseIf State = MOUSE_UP Then
-            Input_MouseState = Hold_R_Up
+            Input_MouseState = Mouse.Right.Up
         ElseIf State = MOUSE_DOUBLE Then
-            Input_MouseState = Hold_R_Double
+            Input_MouseState = Mouse.Right.Double
         End If
-
+        
         Case MOUSE_MIDDLE
         If State = MOUSE_DOWN Then
-            Input_MouseState = Hold_M_Down
+            Input_MouseState = Mouse.Middle.Down
         ElseIf State = MOUSE_UP Then
-            Input_MouseState = Hold_M_Up
+            Input_MouseState = Mouse.Middle.Up
         ElseIf State = MOUSE_DOUBLE Then
-            Input_MouseState = Hold_M_Double
+            Input_MouseState = Mouse.Middle.Double
         End If
 
     End Select
@@ -398,50 +395,50 @@ Public Property Let Input_MouseState(ByVal Button As eMouse, ByVal State As eMou
 
         Case MOUSE_LEFT
         If State = MOUSE_DOWN Then
-            Hold_L_Down = Value
+            Mouse.Left.Down = Value
         ElseIf State = MOUSE_UP Then
-            Hold_L_Up = Value
+            Mouse.Left.Up = Value
         ElseIf State = MOUSE_DOUBLE Then
-            Hold_L_Double = Value
+            Mouse.Left.Double = Value
         End If
 
         Case MOUSE_RIGHT
         If State = MOUSE_DOWN Then
-            Hold_R_Down = Value
+            Mouse.Right.Down = Value
         ElseIf State = MOUSE_UP Then
-            Hold_R_Up = Value
+            Mouse.Right.Up = Value
         ElseIf State = MOUSE_DOUBLE Then
-            Hold_R_Double = Value
+            Mouse.Right.Double = Value
         End If
 
         Case MOUSE_MIDDLE
         If State = MOUSE_DOWN Then
-            Hold_M_Down = Value
+            Mouse.Middle.Down = Value
         ElseIf State = MOUSE_UP Then
-            Hold_M_Up = Value
+            Mouse.Middle.Up = Value
         ElseIf State = MOUSE_DOUBLE Then
-            Hold_M_Double = Value
+            Mouse.Middle.Double = Value
         End If
 
     End Select
 End Property
 
 Public Property Get Input_MouseWheel() As Long
-    Input_MouseWheel = Hold_Wheel
+    Input_MouseWheel = Mouse.Wheel
 End Property
 
 Public Property Let Input_MouseWheel(ByVal Value As Long)
-    Hold_Wheel = Value
+    Mouse.Wheel = Value
 End Property
 
-Private Sub Raw_Initialize()
+Private Sub Raw_Initialize(ByVal hWnd As Long)
     Dim Device(0) As tRaw_Device
     
     ' Set up keyboard
     Device(0).UsagePage = &H1
     Device(0).Usage = &H6
     Device(0).Flags = &H0
-    Device(0).hWnd = frmMain.hWnd
+    Device(0).hWnd = hWnd
     
     If RegisterRawInputDevices(Device(0), 1, Len(Device(0))) = 0 Then
         Err.Raise 513, "Raw_Initialize", "Failed to register device."
@@ -451,10 +448,10 @@ Private Sub Raw_Initialize()
 End Sub
 
 Private Sub Raw_Fix()
-    Dim VKey  As Integer
-    Dim Code  As Integer
-    Dim E0    As Boolean
-    Dim E1    As Boolean
+    Dim VKey As Integer
+    Dim Code As Integer
+    Dim E0   As Boolean
+    Dim E1   As Boolean
     
     ' Get key
     VKey = Keyboard.Data.VKey
