@@ -10,10 +10,10 @@ Input system built upon the Raw Input API and WM_* messages in Visual Basic 6.
 **WM_MOUSEWHEEL:** Not fully implemented. See Task List.
 
 ## Documentation
-#### modMain
+### modMain
 Used to setup the input system and act as an example.
 
-#### modWindows
+### modWindows
 Contains Windows API functions, constants and the **WindowProc** function. **modWindows** has two functions that need to be called: 
 
 ```vb
@@ -28,7 +28,7 @@ Public Sub Windows_Terminate()
 ```
 Call when terminating your application.
 
-#### modInput
+### modInput
 Contains all the input related code and declarations for the Raw Input API. **modInput** has one function that needs to be called:
 
 ```vb
